@@ -12,7 +12,6 @@ app = Flask(__name__, static_url_path='', static_folder='static')
 CORS(app, origins='*')
 
 # load model
-# def load_model():
 # model_stt = WhisperModel("medium")
 model_stt = WhisperModel("medium", device="cpu", compute_type="int8")
 model_tts = VitsModel.from_pretrained("facebook/mms-tts-ind")

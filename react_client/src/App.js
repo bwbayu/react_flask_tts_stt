@@ -13,6 +13,7 @@ function App() {
   const handlePlay = () => {
     setIsPlaying(true);
   };
+
   const handlePause = () => {
     setIsPlaying(false);
   };
