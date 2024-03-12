@@ -32,12 +32,15 @@ function App() {
   const handleButtonText = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/predict_text', { text });
-      if (response.data.success) {
-        console.log('done text to speech');
-        // reload the audio file that want to play
-        const newAudioUrl = `http://localhost:5000/get_audio?${Date.now()}`;
-        setAudioUrl(newAudioUrl);
+      if (text !== '') {
+        const response = await axios.post('http://localhost:5000/predict_text', { text });
+        if (response.data.success) {
+          console.log('done text to speech');
+          // Get the filepath from the response
+          const newAudioUrl = `http://localhost:5000/get_audio/${response.data.audio_url}`;
+          // Set the audio URL in your frontend state
+          setAudioUrl(newAudioUrl);
+        }
       }
     } catch (error) {
       console.error('Error:', error);

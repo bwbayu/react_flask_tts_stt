@@ -7,6 +7,7 @@ from flask import Flask, request, jsonify, send_file
 from num2words import num2words
 from flask_cors import CORS
 import os
+import uuid
 
 app = Flask(__name__, static_url_path='', static_folder='static')
 CORS(app, origins='*')
@@ -28,10 +29,11 @@ def text_preprocessing(text):
     return ' '.join(words)
 
 # endpoint for get audio for text to speech
-@app.route('/get_audio', methods=['GET'])
-def get_audio():
-    response = send_file("static/mms_output.wav", mimetype="audio/wav")
-    return response
+@app.route('/get_audio/<filename>', methods=['GET'])
+def get_audio(filename):
+    base_dir = "static"
+    filepath = os.path.join(base_dir, filename)
+    return send_file(filepath, mimetype="audio/wav")
 
 # endpoint for run the model for text to speech engine
 @app.route('/predict_text', methods=['POST'])
@@ -49,10 +51,15 @@ def tts():
     # convert waveform image numpy
     output_np = output.squeeze().numpy()
 
-    # save the numpy to .wav file
-    wavfile.write("static/mms_output.wav", rate=model_tts.config.sampling_rate, data=output_np)
+    # generate uuid
+    unique_id = uuid.uuid4()
 
-    return jsonify({"success": True})
+    # save the numpy to .wav file
+    filename = f"tts_{unique_id}.wav"
+    filepath = os.path.join("static", filename)
+    wavfile.write(filepath, rate=model_tts.config.sampling_rate, data=output_np)
+
+    return jsonify({"success": True, "audio_url": filename})
 
 # endpoint for run the model for speech to text engine
 @app.route('/predict_audio', methods=['POST'])
