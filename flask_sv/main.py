@@ -59,7 +59,7 @@ def tts():
     filepath = os.path.join("static", filename)
     wavfile.write(filepath, rate=model_tts.config.sampling_rate, data=output_np)
 
-    return jsonify({"success": True, "audio_url": filename})
+    return jsonify({"success": True, "audio_url": filename, "audio_path": filepath})
 
 # endpoint for run the model for speech to text engine
 @app.route('/predict_audio', methods=['POST'])
